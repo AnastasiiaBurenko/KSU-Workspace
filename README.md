@@ -10,4 +10,4 @@ KSU Workspace
 Університетські об'єкти: Факультети, Спеціальності, Групи, Дисципліни, Викладачі, Розклад, Завдання.
 Особисті об'єкти: Персональні сторінки, Блоки, Бази даних, Задачі, Файли.
 
-Посилання на розгорнуту сторінку: [GitHub Pages](https://github.com/AnastasiiaBurenko/KSU-Workspace.git)
+Посилання на розгорнуту сторінку: [GitHub Pages]((https://anastasiiaburenko.github.io/KSU-Workspace/))
