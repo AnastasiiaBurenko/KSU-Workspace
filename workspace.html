@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Персональний простір та форма створення записів у KSU Workspace">
+    <title>KSU Workspace | Мій Workspace</title>
+</head>
+<body>
+    <a href="#main-content">Перейти до основного вмісту</a>
+
+    <header>
+        <h1>Мій Workspace</h1>
+        <nav aria-label="Головна навігація">
+            <ul>
+                <li><a href="index.html">Головна</a></li>
+                <li><a href="courses.html">Дисципліни</a></li>
+                <li><a href="workspace.html">Мій Workspace (Форма)</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main id="main-content">
+        <section>
+            <h2>Управління персональними сторінками та завданнями</h2>
+            <p>Створюйте власні нотатки, прив'язуйте їх до дисциплін та організовуйте навчальний процес.</p>
+
+            <form action="#" method="post">
+                <fieldset>
+                    <legend>Основна інформація про запис</legend>
+                    
+                    <p>
+                        <label for="record-title">Назва сторінки / завдання:</label><br>
+                        <input type="text" id="record-title" name="record_title" required placeholder="Наприклад: Курсовий проєкт">
+                    </p>
+
+                    <p>
+                        <label for="record-email">Контактна пошта:</label><br>
+                        <input type="email" id="record-email" name="record_email" required placeholder="025679@university.kherson.ua">
+                    </p>
+
+                    <p>
+                        <label for="record-date">Термін виконання (дедлайн):</label><br>
+                        <input type="date" id="record-date" name="record_date" required>
+                    </p>
+                </fieldset>
+
+                <fieldset>
+                    <legend>Налаштування та деталі</legend>
+
+                    <p>
+                        <label for="record-priority">Пріоритет (від 1 до 5):</label><br>
+                        <input type="number" id="record-priority" name="record_priority" min="1" max="5" value="3">
+                    </p>
+
+                    <p>
+                        <label for="course-link">Пов'язана дисципліна:</label><br>
+                        <select id="course-link" name="course_link">
+                            <option value="web">Веб-програмування</option>
+                            <option value="db">Кар'єрні навички</option>
+                            <option value="ba">Алгоритми і структури даних</option>
+                        </select>
+                    </p>
+
+                    <p>
+                        <label for="record-notes">Опис та нотатки:</label><br>
+                        <textarea id="record-notes" name="record_notes" rows="4" cols="40" placeholder="Введіть вміст сторінки або деталі задачі..."></textarea>
+                    </p>
+                </fieldset>
+
+                <p>
+                    <button type="submit">Створити запис у Workspace</button>
+                    <button type="reset">Очистити поля</button>
+                </p>
+            </form>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2026 KSU Workspace Hub. Всі права захищено.</p>
+    </footer>
+</body>
+</html>
