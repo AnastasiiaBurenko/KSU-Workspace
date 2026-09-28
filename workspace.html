@@ -3,81 +3,116 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Персональний простір та форма створення записів у KSU Workspace">
+    <meta name="description" content="Створення запису у персональному просторі KSU Workspace">
     <title>KSU Workspace | Мій Workspace</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <a href="#main-content">Перейти до основного вмісту</a>
+    <a href="#main-content" class="skip-link">Перейти до основного вмісту</a>
 
-    <header>
-        <h1>Мій Workspace</h1>
-        <nav aria-label="Головна навігація">
-            <ul>
-                <li><a href="index.html">Головна</a></li>
-                <li><a href="courses.html">Дисципліни</a></li>
-                <li><a href="workspace.html">Мій Workspace (Форма)</a></li>
-            </ul>
-        </nav>
-    </header>
+    <div class="page-layout">
+        <header class="site-header">
+            <a href="index.html" class="logo">
+                <span class="logo-mark">KSU</span>
+                <span>Workspace Hub</span>
+            </a>
+            <nav aria-label="Головна навігація">
+                <ul class="nav-list">
+                    <li><a href="index.html">Головна</a></li>
+                    <li><a href="courses.html">Дисципліни</a></li>
+                    <li><a href="workspace.html" class="nav-book">Мій Workspace</a></li>
+                </ul>
+            </nav>
+        </header>
 
-    <main id="main-content">
-        <section>
-            <h2>Управління персональними сторінками та завданнями</h2>
-            <p>Створюйте власні нотатки, прив'язуйте їх до дисциплін та організовуйте навчальний процес.</p>
+        <main id="main-content">
+            <section class="courses-hero-section">
+                <div class="section-header">
+                    <div>
+                        <p class="section-eyebrow">Персональний модуль</p>
+                        <h2 class="section-title">Створення <strong>запису</strong></h2>
+                    </div>
+                    <p class="section-description">Створюйте власні нотатки, прив'язуйте їх до дисциплін та організовуйте навчальний процес.</p>
+                </div>
 
-            <form action="#" method="post">
-                <fieldset>
-                    <legend>Основна інформація про запис</legend>
-                    
-                    <p>
-                        <label for="record-title">Назва сторінки / завдання:</label><br>
-                        <input type="text" id="record-title" name="record_title" required placeholder="Наприклад: Курсовий проєкт">
-                    </p>
+                <form class="workspace-form-grid" action="#" method="POST">
+                    <!-- Картка 1: Основна інформація -->
+                    <div class="workspace-card-block card">
+                        <div class="card-content-inner">
+                            <h3>Основна інформація</h3>
+                            
+                            <div class="form-group">
+                                <label for="title">Назва сторінки / завдання:</label>
+                                <input type="text" id="title" class="form-control" placeholder="Наприклад: Курсовий проєкт">
+                            </div>
 
-                    <p>
-                        <label for="record-email">Контактна пошта:</label><br>
-                        <input type="email" id="record-email" name="record_email" required placeholder="025679@university.kherson.ua">
-                    </p>
+                            <div class="form-group">
+                                <label for="deadline">Термін виконання (дедлайн):</label>
+                                <input type="date" id="deadline" class="form-control">
+                            </div>
 
-                    <p>
-                        <label for="record-date">Термін виконання (дедлайн):</label><br>
-                        <input type="date" id="record-date" name="record_date" required>
-                    </p>
-                </fieldset>
+                            <div class="form-group">
+                                <label for="status">Статус виконання:</label>
+                                <select id="status" class="glass-select">
+                                    <option>У процесі</option>
+                                    <option>Виконано</option>
+                                    <option>Відкладено</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
 
-                <fieldset>
-                    <legend>Налаштування та деталі</legend>
+                    <!-- Картка 2: Налаштування та деталі -->
+                    <div class="workspace-card-block card">
+                        <div class="card-content-inner">
+                            <h3>Налаштування та деталі</h3>
 
-                    <p>
-                        <label for="record-priority">Пріоритет (від 1 до 5):</label><br>
-                        <input type="number" id="record-priority" name="record_priority" min="1" max="5" value="3">
-                    </p>
+                            <div class="form-group">
+                                <label for="priority">Пріоритет (від 1 до 5):</label>
+                                <input type="number" id="priority" class="form-control" min="1" max="5" value="3">
+                            </div>
 
-                    <p>
-                        <label for="course-link">Пов'язана дисципліна:</label><br>
-                        <select id="course-link" name="course_link">
-                            <option value="web">Веб-програмування</option>
-                            <option value="db">Кар'єрні навички</option>
-                            <option value="ba">Алгоритми і структури даних</option>
-                        </select>
-                    </p>
+                            <div class="form-group">
+                                <label for="discipline">Пов'язана дисципліна:</label>
+                                <select id="discipline" class="glass-select">
+                                    <option>Веб-програмування</option>
+                                    <option>Кар'єрні навички</option>
+                                    <option>Алгоритми і структури даних</option>
+                                </select>
+                            </div>
 
-                    <p>
-                        <label for="record-notes">Опис та нотатки:</label><br>
-                        <textarea id="record-notes" name="record_notes" rows="4" cols="40" placeholder="Введіть вміст сторінки або деталі задачі..."></textarea>
-                    </p>
-                </fieldset>
+                            <div class="form-group">
+                                <label for="notes">Опис та нотатки:</label>
+                                <textarea id="notes" class="form-control" rows="3" placeholder="Введіть зміст сторінки або деталі задачі..."></textarea>
+                            </div>
+                        </div>
+                    </div>
 
-                <p>
-                    <button type="submit">Створити запис у Workspace</button>
-                    <button type="reset">Очистити поля</button>
-                </p>
-            </form>
-        </section>
-    </main>
+                    <!-- Кнопки керування -->
+                    <div class="workspace-form-actions">
+                        <button type="submit" class="btn">Створити запис у Workspace</button>
+                        <button type="reset" class="btn btn-light">Очистити поля</button>
+                    </div>
+                </form>
 
-    <footer>
-        <p>&copy; 2026 KSU Workspace Hub. Всі права захищено.</p>
-    </footer>
+                <!-- Блок збережених записів -->
+                <div class="saved-records-section">
+                    <h3>Мої збережені записи</h3>
+                </div>
+            </section>
+        </main>
+
+        <aside>
+            <h2>Інструменти</h2>
+            <div class="tags">
+                <a href="workspace.html" class="tag active">Новий запис</a>
+                <a href="#" class="tag">Архів</a>
+            </div>
+        </aside>
+
+        <footer>
+            <p>&copy; 2026 KSU Workspace Hub. Всі права захищено.</p>
+        </footer>
+    </div>
 </body>
 </html>
