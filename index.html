@@ -5,49 +5,121 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Головна сторінка KSU Workspace — персонального простору студента ХДУ">
     <title>KSU Workspace | Головна</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <a href="#main-content">Перейти до основного вмісту</a>
+    <a href="#main-content" class="skip-link">Перейти до основного вмісту</a>
 
-    <header>
-        <h1>KSU Workspace — Головна сторінка</h1>
-        <nav aria-label="Головна навігація">
-            <ul>
-                <li><a href="index.html">Головна</a></li>
-                <li><a href="courses.html">Дисципліни</a></li>
-                <li><a href="workspace.html">Мій Workspace (Форма)</a></li>
-            </ul>
-        </nav>
-    </header>
+    <div class="page-layout">
+        <header class="site-header">
+            <a href="index.html" class="logo">
+                <span class="logo-mark">KSU</span>
+                <span>Workspace Hub</span>
+            </a>
+            <nav aria-label="Головна навігація">
+                <ul class="nav-list">
+                    <li><a href="index.html">Головна</a></li>
+                    <li><a href="courses.html">Дисципліни</a></li>
+                    <li><a href="workspace.html" class="nav-book">Мій Workspace</a></li>
+                </ul>
+            </nav>
+        </header>
 
-    <main id="main-content">
-        <section>
-            <h2>Вітаємо, Анастасіє!</h2>
-        </section>
+        <main id="main-content">
+            <section class="hero">
+                <div class="hero-content">
+                    <p class="hero-eyebrow">Вітаємо у системі</p>
+                    <h1>Персональний простір <strong>студента ХДУ</strong></h1>
+                    <p>Керуйте своїм навчальним процесом, стежте за розкладом та організовуйте власні нотатки в єдиному цифровому хабі.</p>
+                    <div class="hero-btn">
+                        <a href="workspace.html" class="btn btn-light">Створити запис</a>
+                    </div>
+                </div>
+            </section>
 
-        <section>
-            <h2>Четвер</h2>
-            <article>
-                <h3>Найближчі заняття</h3>
-                <p>4 пара: Веб-програмування (Лабораторна онлайн)</p>
-            </article>
-        </section>
+            <section class="cards-grid-margin">
+                <div class="section-header">
+                    <div>
+                        <p class="section-eyebrow">Розклад на сьогодні</p>
+                        <h2 class="section-title">Поточні <strong>заняття</strong></h2>
+                    </div>
+                    <p class="section-description">Актуальний розклад відповідно до вашої академічної групи.</p>
+                </div>
 
-        <section>
-            <figure>
-    <img src="https://gabbitas.com/wp-content/uploads/2019/05/coding3-min-5472x2736.jpg" alt="Екран ноутбука з відкритим кодом розробки вебзастосунку" width="300">
-    <figcaption>Робоче середовище студента</figcaption>
-</figure>
-            <h2>Найближчі завдання</h2>
-            <ul>
-                <li><strong>Веб-програмування:</strong> Здати Лабораторну роботу №4 (Термін: 04.10) - Високий пріоритет</li>
-                <li><strong>Кар'єрні навички:</strong> Пройти 8-9 модуль на strum (Термін: за 3 дні до практики) - Високий пріоритет</li>
-            </ul>
-        </section>
-    </main>
+                <div class="cards-grid compact-grid">
+                    <article class="card compact-card">
+                        <div class="card-content card-content-inner">
+                            <span class="glass-pill schedule-pill">4 пара</span>
+                            <h3>Веб-програмування</h3>
+                            <p>Лабораторна робота онлайн.</p>
+                        </div>
+                        <div class="card-inner-footer">
+                            <span class="card-status-label">Статус: <strong>Триває</strong></span>
+                        </div>
+                    </article>
 
-    <footer>
-        <p>&copy; 2026 KSU Workspace Hub. Всі права захищено.</p>
-    </footer>
+                    <article class="card compact-card">
+                        <div class="card-content card-content-inner">
+                            <span class="glass-pill schedule-pill">5 пара</span>
+                            <h3>Кар'єрні навички</h3>
+                            <p>Проходження модулів та тестування на освітній платформі strum.</p>
+                        </div>
+                        <div class="card-inner-footer">
+                            <span class="card-status-label">Статус: <strong>Заплановано</strong></span>
+                        </div>
+                    </article>
+                </div>
+            </section>
+
+            <section>
+                <div class="section-header">
+                    <div>
+                        <p class="section-eyebrow">Завдання та дедлайни</p>
+                        <h2 class="section-title">Найближчі <strong>активності</strong></h2>
+                    </div>
+                </div>
+
+                <div class="cards-grid compact-grid">
+                    <article class="card compact-card">
+                        <div class="card-content card-content-inner">
+                            <h3>Лабораторна робота №4</h3>
+                            <p>Адаптивність і дизайн-система. Термін: 04.10.</p>
+                        </div>
+                        <div class="card-inner-footer">
+                            <span>Високий пріоритет</span>
+                        </div>
+                    </article>
+
+                    <article class="card compact-card">
+                        <div class="card-content card-content-inner">
+                            <h3>Модуль Strum</h3>
+                            <p>Пройти 8-9 модуль на платформі Strum. Термін: за 3 дні до практики.</p>
+                        </div>
+                        <div class="card-inner-footer">
+                            <span>Важливо</span>
+                        </div>
+                    </article>
+                </div>
+            </section>
+        </main>
+
+        <aside>
+            <h2>Пошук та теги</h2>
+            <div class="search">
+                <input type="text" placeholder="Шукати в системі...">
+            </div>
+            <h3>Категорії</h3>
+            <div class="tags">
+                <a href="#" class="tag active">Усі</a>
+                <a href="#" class="tag">Розклад</a>
+                <a href="#" class="tag">Завдання</a>
+                <a href="#" class="tag">Курси</a>
+            </div>
+        </aside>
+
+        <footer>
+            <p>&copy; 2026 KSU Workspace Hub. Всі права захищено.</p>
+        </footer>
+    </div>
 </body>
 </html>
