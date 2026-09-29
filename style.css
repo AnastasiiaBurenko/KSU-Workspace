@@ -157,15 +157,16 @@ footer {
   transform: translateY(-1px);
 }
 
-.nav-book {
-  background: var(--text);
-  color: white;
+.nav-list li a.nav-book {
+  background: #29343a;
+  color: #ffffff;
   padding-left: 20px;
   padding-right: 20px;
 }
 
-.nav-book:hover {
-  background: #29343a;
+.nav-list li a.nav-book:hover {
+  background: #1f272c;
+  color: #ffffff;
   transform: translateY(-2px);
 }
 
