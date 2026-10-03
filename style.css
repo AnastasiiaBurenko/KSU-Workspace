@@ -1,26 +1,35 @@
 /* =========================================================
-   KSU WORKSPACE - STYLESHEET (Lab 3)
+   KSU WORKSPACE - STYLESHEET (Lab 4: Design Tokens & System)
    ========================================================= */
 
 :root {
-  --bg: #e8eef2;
-  --bg-soft: #f1f4f6;
+  /* Базова палітра HSL та дизайн-токени (Світла тема) */
+  --hue: 204;
+  --bg: hsl(var(--hue), 25%, 94%);
+  --bg-soft: hsl(var(--hue), 20%, 96%);
   --surface: rgba(255, 255, 255, 0.72);
-  --surface-solid: #f7f8f9;
+  --surface-solid: hsl(var(--hue), 15%, 98%);
 
-  --text: #11171b;
-  --text-secondary: #66737a;
+  --text: hsl(var(--hue), 20%, 9%);
+  --text-secondary: hsl(var(--hue), 10%, 43%);
   --text-light: #ffffff;
 
-  --accent: #8fa7b2;
-  --accent-dark: #536973;
-  --accent-soft: #dce6eb;
+  --accent: hsl(var(--hue), 20%, 63%);
+  --accent-dark: hsl(var(--hue), 16%, 38%);
+  --accent-soft: hsl(var(--hue), 25%, 89%);
 
   --glass: rgba(255, 255, 255, 0.48);
   --glass-strong: rgba(255, 255, 255, 0.72);
   --glass-border: rgba(255, 255, 255, 0.7);
 
   --border: rgba(17, 23, 27, 0.08);
+
+  /* Шкала типографіки через clamp() та міжрядковий інтервал */
+  --font-size-sm: clamp(0.8rem, 0.78rem + 0.1vw, 0.88rem);
+  --font-size-base: clamp(0.9rem, 0.88rem + 0.2vw, 1rem);
+  --font-size-lg: clamp(1.05rem, 1rem + 0.3vw, 1.2rem);
+  --font-size-xl: clamp(1.8rem, 1.5vw + 1rem, 3rem);
+  --line-height-base: 1.5;
 
   --radius-xl: 40px;
   --radius-lg: 30px;
@@ -33,6 +42,56 @@
   --transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+/* Автоматична темна тема (чистий нейтральний темний мінімалізм без синяви) */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #121212;                      /* Чистий глибокий темно-сірий фон */
+    --bg-soft: #1a1a1a;                 /* М'який фон елементів */
+    --surface: rgba(26, 26, 26, 0.85);  /* Напівпрозорі картки */
+    --surface-solid: #1e1e1e;           /* Щільний фон карток */
+
+    --text: #ffffff;                    /* Чистий білий текст */
+    --text-secondary: #a0a0a0;          /* Приглушений сірий для підказок */
+    --text-light: #000000;
+
+    --accent: #ffffff;                  /* Акцент — білий */
+    --accent-dark: #e0e0e0;
+    --accent-soft: rgba(255, 255, 255, 0.15); /* М'яка біла підсвітка */
+
+    --glass: rgba(26, 26, 26, 0.7);
+    --glass-strong: rgba(18, 18, 18, 0.9);
+    --glass-border: rgba(255, 255, 255, 0.1);
+
+    --border: rgba(255, 255, 255, 0.1);
+    --shadow-soft: 0 20px 60px rgba(0, 0, 0, 0.6);
+    --shadow-card: 0 18px 45px rgba(0, 0, 0, 0.7);
+  }
+}
+
+/* Примусова темна тема при ручному перемиканні (клас .dark на тезі <html>) */
+html.dark {
+  --bg: #121212;
+  --bg-soft: #1a1a1a;
+  --surface: rgba(26, 26, 26, 0.85);
+  --surface-solid: #1e1e1e;
+
+  --text: #ffffff;
+  --text-secondary: #a0a0a0;
+  --text-light: #000000;
+
+  --accent: #ffffff;
+  --accent-dark: #e0e0e0;
+  --accent-soft: rgba(255, 255, 255, 0.15);
+
+  --glass: rgba(26, 26, 26, 0.7);
+  --glass-strong: rgba(18, 18, 18, 0.9);
+  --glass-border: rgba(255, 255, 255, 0.1);
+
+  --border: rgba(255, 255, 255, 0.1);
+  --shadow-soft: 0 20px 60px rgba(0, 0, 0, 0.6);
+  --shadow-card: 0 18px 45px rgba(0, 0, 0, 0.7);
+}
+
 *,
 *::before,
 *::after {
@@ -43,21 +102,28 @@
 
 html {
   scroll-behavior: smooth;
+  font-size: 16px;
 }
 
 body {
   font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Inter", "Segoe UI", sans-serif;
-  background: radial-gradient(circle at 15% 10%, rgba(255, 255, 255, 0.9), transparent 35%),
-              radial-gradient(circle at 90% 30%, rgba(201, 217, 225, 0.5), transparent 35%),
+  background: radial-gradient(circle at 15% 10%, var(--surface), transparent 35%),
+              radial-gradient(circle at 90% 30%, var(--accent-soft), transparent 35%),
               var(--bg);
   color: var(--text);
   min-height: 100vh;
-  line-height: 1.5;
+  line-height: var(--line-height-base);
+  font-size: var(--font-size-base);
   padding: 24px;
   -webkit-font-smoothing: antialiased;
 }
 
-/* Макет сторінки на Grid (іменовані області) */
+/* Обмеження довжини рядка для текстових блоків (читабельність до 65 символів) */
+p, li, .section-description {
+  max-width: 65ch;
+}
+
+/* Макет сторінки на Grid (іменовані області) — Базово для широких екранів (1280px+) */
 .page-layout {
   width: min(1450px, 100%);
   min-height: calc(100vh - 48px);
@@ -125,7 +191,7 @@ footer {
   place-items: center;
   border-radius: 12px;
   background: var(--text);
-  color: white;
+  color: var(--bg);
   font-size: 0.8rem;
   font-weight: 700;
 }
@@ -145,29 +211,66 @@ footer {
   padding: 9px 15px;
   color: var(--text-secondary);
   text-decoration: none;
-  font-size: 0.88rem;
+  font-size: var(--font-size-sm);
   font-weight: 500;
   border-radius: 999px;
   transition: var(--transition);
 }
 
 .nav-list a:hover {
-  background: rgba(255, 255, 255, 0.7);
+  background: var(--surface);
   color: var(--text);
   transform: translateY(-1px);
 }
 
 .nav-list li a.nav-book {
-  background: #29343a;
-  color: #ffffff;
+  background: #000000; /* Чорний фон у світлій темі */
+  color: #ffffff;      /* Білий текст */
   padding-left: 20px;
   padding-right: 20px;
 }
 
 .nav-list li a.nav-book:hover {
-  background: #1f272c;
+  background: var(--accent-dark);
   color: #ffffff;
   transform: translateY(-2px);
+}
+
+/* Колір кнопки «Мій Workspace» для темної теми */
+html.dark .nav-list li a.nav-book {
+  background: #ffffff; /* Білий фон у темній темі */
+  color: #000000;      /* Чорний текст */
+}
+
+html.dark .nav-list li a.nav-book:hover {
+  background: var(--accent-dark);
+  color: #ffffff;
+}
+
+/* Стилі для ручного перемикача теми в шапці */
+.theme-toggle-btn {
+  background: var(--surface);
+  border: 1px solid var(--glass-border);
+  color: var(--text);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: var(--transition);
+  box-shadow: var(--shadow-soft);
+  margin-left: 12px;
+}
+
+.theme-toggle-btn:hover {
+  background: var(--accent-soft);
+  transform: translateY(-2px);
+}
+
+.theme-icon {
+  font-size: 0.95rem;
 }
 
 section {
@@ -190,9 +293,9 @@ section {
   padding: 52px;
   color: white;
   border-radius: 42px;
-  background: linear-gradient(180deg, rgba(20, 29, 34, 0.04) 0%, rgba(20, 29, 34, 0.10) 40%, rgba(15, 20, 23, 0.72) 100%),
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.04) 0%, rgba(0, 0, 0, 0.10) 40%, rgba(0, 0, 0, 0.72) 100%),
               url("images/rmt-hero.jpg") center / cover no-repeat;
-  box-shadow: 0 30px 80px rgba(44, 60, 69, 0.18);
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.18);
 }
 
 .hero-content {
@@ -213,8 +316,8 @@ section {
 .hero h1 {
   max-width: 760px;
   margin-bottom: 22px;
-  font-size: clamp(3rem, 6vw, 6rem);
-  line-height: 0.92;
+  font-size: var(--font-size-xl);
+  line-height: 0.95;
   letter-spacing: -0.075em;
   font-weight: 300;
 }
@@ -226,8 +329,8 @@ section {
 .hero p {
   max-width: 570px;
   margin-bottom: 25px;
-  color: rgba(255, 255, 255, 0.82);
-  font-size: 0.95rem;
+  color: rgba(255, 255, 255, 0.85);
+  font-size: var(--font-size-base);
   line-height: 1.6;
 }
 
@@ -246,9 +349,9 @@ button,
   border: none;
   border-radius: 999px;
   background: var(--text);
-  color: white;
+  color: var(--bg);
   font-family: inherit;
-  font-size: 0.88rem;
+  font-size: var(--font-size-sm);
   font-weight: 600;
   text-decoration: none;
   cursor: pointer;
@@ -258,13 +361,13 @@ button,
 button:hover,
 .btn:hover {
   transform: translateY(-3px);
-  box-shadow: 0 12px 30px rgba(20, 30, 35, 0.18);
+  box-shadow: var(--shadow-card);
 }
 
 .btn-light {
-  background: rgba(255, 255, 255, 0.82);
+  background: var(--surface);
   color: var(--text);
-  border: 1px solid rgba(255, 255, 255, 0.7);
+  border: 1px solid var(--glass-border);
   backdrop-filter: blur(15px);
 }
 
@@ -299,7 +402,7 @@ button:hover,
 .section-description {
   max-width: 400px;
   color: var(--text-secondary);
-  font-size: 0.88rem;
+  font-size: var(--font-size-sm);
   line-height: 1.5;
 }
 
@@ -360,7 +463,7 @@ button:hover,
 .card p {
   margin-bottom: 12px;
   color: var(--text-secondary);
-  font-size: 0.84rem;
+  font-size: var(--font-size-sm);
   line-height: 1.5;
 }
 
@@ -429,7 +532,7 @@ button:hover,
   border-radius: 999px;
   font-size: 0.8rem;
   font-weight: 500;
-  background: rgba(255, 255, 255, 0.8);
+  background: var(--surface);
   border: 1px solid var(--border);
 }
 
@@ -441,15 +544,15 @@ button:hover,
 }
 
 .course-status.ready {
-  background: #e2ece9;
-  color: #2c5346;
+  background: #2c534633;
+  color: var(--text);
   font-weight: 600;
   border-color: transparent;
 }
 
 .course-status.pending {
-  background: #fae8e0;
-  color: #7a3e2e;
+  background: #7a3e2e33;
+  color: var(--text);
   font-weight: 600;
   border-color: transparent;
 }
@@ -460,7 +563,7 @@ aside {
   position: sticky;
   top: 120px;
   padding: 24px;
-  background: rgba(255, 255, 255, 0.55);
+  background: var(--glass);
   border: 1px solid var(--glass-border);
   border-radius: var(--radius-xl);
   box-shadow: var(--shadow-soft);
@@ -483,20 +586,20 @@ aside h3 {
 .search input {
   width: 100%;
   padding: 12px 16px;
-  border: 1px solid rgba(17, 23, 27, 0.08);
+  border: 1px solid var(--border);
   border-radius: var(--radius-sm);
-  background: rgba(255, 255, 255, 0.7);
+  background: var(--surface);
   color: var(--text);
   font-family: inherit;
-  font-size: 0.9rem;
+  font-size: var(--font-size-base);
   outline: none;
   transition: var(--transition);
 }
 
 .search input:focus {
-  background: white;
+  background: var(--surface-solid);
   border-color: var(--accent);
-  box-shadow: 0 0 0 4px rgba(143, 167, 178, 0.15);
+  box-shadow: 0 0 0 4px var(--accent-soft);
 }
 
 .tags {
@@ -512,7 +615,7 @@ aside .tags {
 .tag {
   padding: 8px 12px;
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.65);
+  background: var(--glass);
   color: var(--text-secondary);
   border: 1px solid var(--border);
   font-size: 0.76rem;
@@ -522,8 +625,8 @@ aside .tags {
 
 .tag:hover,
 .tag.active {
-  background: var(--accent-soft);
-  color: var(--accent-dark);
+  background: #ffffff;
+  color: #000000;
   border-color: transparent;
 }
 
@@ -534,7 +637,7 @@ aside .tags {
   padding: 6px 12px;
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.25);
-  border: 1px solid rgba(255, 255, 255, 0.4);
+  border: 1px solid var(--glass-border);
   color: white;
   font-size: 0.75rem;
   backdrop-filter: blur(15px);
@@ -558,7 +661,7 @@ aside .tags {
   height: auto;
   padding: 12px 20px;
   background: var(--text);
-  color: white;
+  color: var(--bg);
   border-radius: var(--radius-sm);
   box-shadow: var(--shadow-card);
   text-decoration: none;
@@ -570,7 +673,7 @@ footer {
   padding: 25px;
   color: var(--text-secondary);
   text-align: center;
-  font-size: 0.75rem;
+  font-size: var(--font-size-sm);
 }
 
 /* Форма та випадаючі списки у стилі soft-glassmorphism */
@@ -591,7 +694,7 @@ footer {
 .workspace-form-grid label {
   display: block;
   margin-bottom: 6px;
-  font-size: 0.85rem;
+  font-size: var(--font-size-sm);
   color: var(--text-secondary);
 }
 
@@ -602,12 +705,12 @@ footer {
 .workspace-form-grid textarea {
   width: 100%;
   padding: 12px 16px;
-  border: 1px solid rgba(17, 23, 27, 0.08);
+  border: 1px solid var(--border);
   border-radius: var(--radius-sm);
-  background: rgba(255, 255, 255, 0.7);
+  background: var(--surface);
   outline: none;
   font-family: inherit;
-  font-size: 0.9rem;
+  font-size: var(--font-size-base);
   color: var(--text);
   transition: var(--transition);
 }
@@ -618,22 +721,22 @@ footer {
 
 .workspace-form-grid input:focus,
 .workspace-form-grid textarea:focus {
-  background: #ffffff;
+  background: var(--surface-solid);
   border-color: var(--accent);
-  box-shadow: 0 0 0 3px rgba(49, 66, 76, 0.08);
+  box-shadow: 0 0 0 3px var(--accent-soft);
 }
 
 .glass-select {
   width: 100%;
   padding: 12px 16px;
-  background: rgba(255, 255, 255, 0.65);
+  background: var(--surface);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   border: 1px solid var(--glass-border);
   border-radius: var(--radius-sm);
   color: var(--text);
   font-family: inherit;
-  font-size: 0.9rem;
+  font-size: var(--font-size-base);
   outline: none;
   cursor: pointer;
   
@@ -641,7 +744,7 @@ footer {
   -webkit-appearance: none;
   -moz-appearance: none;
   
-  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2311171b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3polyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%238fa7b2' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3polyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
   background-repeat: no-repeat;
   background-position: right 14px center;
   background-size: 16px;
@@ -651,18 +754,18 @@ footer {
 }
 
 .glass-select:hover {
-  background-color: rgba(255, 255, 255, 0.85);
+  background-color: var(--surface-solid);
   border-color: var(--accent);
 }
 
 .glass-select:focus {
-  background-color: rgba(255, 255, 255, 0.95);
+  background-color: var(--surface-solid);
   border-color: var(--accent-dark);
-  box-shadow: 0 0 0 4px rgba(143, 167, 178, 0.15);
+  box-shadow: 0 0 0 4px var(--accent-soft);
 }
 
 .glass-select option {
-  background-color: #f1f4f6;
+  background-color: var(--bg-soft);
   color: var(--text);
   padding: 12px;
 }
@@ -684,8 +787,12 @@ footer {
   margin-bottom: 15px;
 }
 
-/* Адаптивність */
-@media (max-width: 1050px) {
+/* =========================================================
+   АДАПТИВНІСТЬ (Контрольні ширини: 1280px, 768px, 360px)
+   ========================================================= */
+
+/* Контрольна ширина: Планшети (до 768px) */
+@media (max-width: 768px) {
   .page-layout {
     grid-template-areas:
       "header"
@@ -702,47 +809,64 @@ footer {
   .compact-grid {
     grid-template-columns: 1fr;
   }
-}
 
-@media (max-width: 700px) {
   body {
-    padding: 10px;
-    padding-bottom: 90px;
-  }
-
-  .page-layout {
-    gap: 14px;
-  }
-
-  .site-header {
-    top: 10px;
-    min-height: 62px;
-    padding: 10px 12px 10px 18px;
-    border-radius: 24px;
-  }
-
-  .nav-list {
-    display: none;
+    padding: 16px;
   }
 
   section {
-    padding: 22px;
+    padding: 24px;
     border-radius: 28px;
-    margin-bottom: 14px;
+    margin-bottom: 16px;
+  }
+}
+
+/* Контрольна ширина: Мобільні пристрої (до 360px) */
+@media (max-width: 360px) {
+  body {
+    padding: 8px;
+    padding-bottom: 80px;
+  }
+
+  .page-layout {
+    gap: 12px;
+  }
+
+  .site-header {
+    top: 8px;
+    min-height: 60px;
+    padding: 8px 12px 8px 16px;
+    border-radius: 20px;
+  }
+
+  .nav-list {
+    display: none; /* Приховуємо десктопне меню для мобільних екранів 360px */
+  }
+
+  section {
+    padding: 16px;
+    border-radius: 20px;
+    margin-bottom: 12px;
   }
 
   .hero {
-    min-height: 420px;
-    padding: 25px;
-    border-radius: 32px;
+    min-height: 360px;
+    padding: 20px;
+    border-radius: 24px;
   }
 
   .compact-grid {
     grid-template-columns: 1fr;
   }
+
+  .workspace-form-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 .schedule-pill {
-  background: var(--accent-dark);
+  background: #ffffff;
+  color: #000000;
   margin-bottom: 12px;
+  font-weight: 600;
 }
