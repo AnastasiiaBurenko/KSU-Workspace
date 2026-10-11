@@ -126,28 +126,6 @@
         </footer>
     </div>
 
-    <!-- Скрипт перемикання та збереження теми -->
-    <script>
-        const themeToggleBtn = document.getElementById('theme-toggle');
-        const htmlElement = document.documentElement;
-
-        const savedTheme = localStorage.getItem('theme');
-        if (savedTheme === 'dark') {
-            htmlElement.classList.add('dark');
-        } else if (savedTheme === 'light') {
-            htmlElement.classList.remove('dark');
-        }
-
-        if (themeToggleBtn) {
-            themeToggleBtn.addEventListener('click', () => {
-                htmlElement.classList.toggle('dark');
-                if (htmlElement.classList.contains('dark')) {
-                    localStorage.setItem('theme', 'dark');
-                } else {
-                    localStorage.setItem('theme', 'light');
-                }
-            });
-        }
-    </script>
+<script src="script.js" defer></script>
 </body>
 </html>
