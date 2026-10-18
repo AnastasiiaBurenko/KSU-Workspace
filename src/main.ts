@@ -1,5 +1,5 @@
 import { RecordItem } from './types';
-import { validateRecords } from './src/validator';
+import { validateRecords } from './validator';
 
 document.addEventListener('DOMContentLoaded', () => {
     const themeToggleBtn = document.getElementById('theme-toggle') as HTMLButtonElement | null;
