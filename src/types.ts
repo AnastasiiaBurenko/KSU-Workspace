@@ -2,7 +2,7 @@ export interface RecordItem {
   id: number;
   title: string;
   description: string;
-  category: 'schedule' | 'tasks' | 'courses';
+  category: string;
 }
 
-export type LoadingState = 'idle' | 'loading' | 'success' | 'error' | 'empty';
+export type LoadingState = 'idle' | 'loading' | 'success' | 'error';
