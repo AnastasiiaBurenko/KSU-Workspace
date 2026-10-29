@@ -17,6 +17,26 @@ export const App: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [isModalOpen, setIsModalOpen] = useState(false);
 
+  // Стан теми із збереженням у localStorage
+  const [isDarkMode, setIsDarkMode] = useState<boolean>(() => {
+    return localStorage.getItem('theme') === 'dark';
+  });
+
+  // Ефект для застосування класу dark до HTML та збереження теми
+  useEffect(() => {
+    if (isDarkMode) {
+      document.documentElement.classList.add('dark');
+      localStorage.setItem('theme', 'dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+      localStorage.setItem('theme', 'light');
+    }
+  }, [isDarkMode]);
+
+  const handleToggleTheme = () => {
+    setIsDarkMode((prev) => !prev);
+  };
+
   useEffect(() => {
     const controller = new AbortController();
     setLoadingState('loading');
@@ -60,7 +80,10 @@ export const App: React.FC = () => {
 
   return (
     <Routes>
-      <Route path="/" element={<Layout />}>
+      <Route
+        path="/"
+        element={<Layout isDarkMode={isDarkMode} onToggleTheme={handleToggleTheme} />}
+      >
         <Route
           index
           element={
