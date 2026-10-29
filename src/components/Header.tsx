@@ -8,20 +8,43 @@ interface HeaderProps {
 
 export const Header: React.FC<HeaderProps> = ({ isDarkMode, onToggleTheme }) => {
   return (
-    <header className="header">
-      <div className="container header-content">
-        <Link to="/" className="logo">
-          🎓 KSU Workspace
-        </Link>
-        <nav className="nav-links">
-          <NavLink to="/" className={({ isActive }) => (isActive ? 'active-link' : '')}>
-            Головна
-          </NavLink>
-        </nav>
-        <button onClick={onToggleTheme} className="btn btn-secondary">
-          {isDarkMode ? '☀️ Світла' : '🌙 Темна'}
-        </button>
-      </div>
+    <header className="site-header">
+      <Link to="/" className="logo">
+        <div className="logo-mark">KS</div>
+        KSU Workspace
+      </Link>
+      
+      <nav>
+        <ul className="nav-list">
+          <li>
+            <NavLink to="/" className={({ isActive }) => (isActive ? 'active' : '')}>
+              Головна
+            </NavLink>
+          </li>
+          <li>
+            <NavLink to="/courses" className={({ isActive }) => (isActive ? 'active' : '')}>
+              Дисципліни
+            </NavLink>
+          </li>
+          <li>
+            <NavLink to="/" className="nav-book">
+              Мій Workspace
+            </NavLink>
+          </li>
+        </ul>
+      </nav>
+
+      {/* Кнопка-стикер перемикання теми */}
+      <button 
+        onClick={onToggleTheme} 
+        className="theme-toggle-btn" 
+        title="Змінити тему"
+        aria-label="Змінити тему"
+      >
+        <span className="theme-icon">
+          {isDarkMode ? '☀️' : '🌙'}
+        </span>
+      </button>
     </header>
   );
 };
