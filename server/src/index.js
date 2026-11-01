@@ -5,7 +5,15 @@ import recordRoutes from './routes/recordRoutes.js';
 import { requestLogger } from './middleware/logger.js';
 import { notFoundHandler, errorHandler } from './middleware/errorHandler.js';
 
+import { initDatabase } from './db/database.js';
+import { runSeed } from './db/seed.js';
+
 const app = express();
+
+initDatabase();
+setTimeout(() => {
+  runSeed();
+}, 500);
 
 app.use(cors({ origin: config.corsOrigin }));
 app.use(express.json());
