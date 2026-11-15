@@ -1,7 +1,3 @@
-export const register = (req, res) => {
-    res.json({ message: "Register endpoint" });
-};
-
-export const login = (req, res) => {
-    res.json({ message: "Login endpoint" });
+export const authStatus = (req, res) => {
+    res.json({ status: "Auth controller is working!" });
 };
