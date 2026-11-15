@@ -20,10 +20,9 @@
                 <ul class="nav-list">
                     <li><a href="index.html">Головна</a></li>
                     <li><a href="courses.html">Дисципліни</a></li>
-                    <li><a href="workspace.html" class="nav-book">Мій Workspace</a></li>
+                    <li><a href="workspace.html" class="nav-book active">Мій Workspace</a></li>
                 </ul>
             </nav>
-            <!-- Кнопка перемикача теми -->
             <button id="theme-toggle" class="theme-toggle-btn" aria-label="Змінити тему">
                 <span class="theme-icon">🌓</span>
             </button>
@@ -40,7 +39,6 @@
                 </div>
 
                 <form class="workspace-form-grid" action="#" onsubmit="event.preventDefault(); alert('Запис успішно створено!');">
-                    <!-- Картка 1: Основна інформація -->
                     <div class="workspace-card-block card">
                         <div class="card-content-inner">
                             <h2>Основна інформація</h2>
@@ -66,7 +64,6 @@
                         </div>
                     </div>
 
-                    <!-- Картка 2: Налаштування та деталі -->
                     <div class="workspace-card-block card">
                         <div class="card-content-inner">
                             <h2>Налаштування та деталі</h2>
@@ -117,6 +114,6 @@
         </footer>
     </div>
 
-<script type="module" src="/src/main.ts" defer></script>
+<script src="script.js" defer></script>
 </body>
 </html>

@@ -11,113 +11,81 @@
     <a href="#main-content" class="skip-link">Перейти до основного вмісту</a>
 
     <div class="page-layout">
+        <!-- Шапка -->
         <header class="site-header">
             <a href="index.html" class="logo">
                 <span class="logo-mark">KSU</span>
                 <span>Workspace Hub</span>
             </a>
+
             <nav aria-label="Головна навігація">
                 <ul class="nav-list">
-                    <li><a href="index.html">Головна</a></li>
+                    <li><a href="index.html" class="active">Головна</a></li>
                     <li><a href="courses.html">Дисципліни</a></li>
                     <li><a href="workspace.html" class="nav-book">Мій Workspace</a></li>
                 </ul>
             </nav>
-            <!-- Ось тут тепер чітко стоїть кнопка перемикача -->
+
             <button id="theme-toggle" class="theme-toggle-btn" aria-label="Змінити тему">
                 <span class="theme-icon">🌓</span>
             </button>
         </header>
 
+        <!-- Основний контент -->
         <main id="main-content">
             <section class="hero">
                 <div class="hero-content">
-                    <p class="hero-eyebrow">Вітаємо у системі</p>
+                    <div class="hero-eyebrow">
+                        <span class="glass-pill">● Система активна • Група 51-391</span>
+                    </div>
                     <h1>Персональний простір <strong>студента ХДУ</strong></h1>
-                    <p>Керуйте своїм навчальним процесом, стежте за розкладом та організовуйте власні нотатки в єдиному цифровому хабі.</p>
+                    <p>Керуйте своїм навчальним процесом, відстежуйте актуальний розклад та організовуйте власні нотатки в єдиному цифровому хабі.</p>
                     <div class="hero-btn">
-                        <a href="workspace.html" class="btn btn-light">Створити запис</a>
+                        <a href="workspace.html" class="btn">Створити запис</a>
                     </div>
                 </div>
             </section>
 
+            <!-- Секція занять -->
             <section class="cards-grid-margin">
                 <div class="section-header">
                     <div>
                         <p class="section-eyebrow">Розклад на сьогодні</p>
                         <h2 class="section-title">Поточні <strong>заняття</strong></h2>
                     </div>
-                    <p class="section-description">Актуальний розклад відповідно до вашої академічної групи.</p>
+                    <p class="section-description">Актуальний розклад відповідно до академічної групи.</p>
                 </div>
 
-                <div class="cards-grid compact-grid">
-                    <article class="card compact-card">
-                        <div class="card-content card-content-inner">
-                            <span class="glass-pill schedule-pill">4 пара</span>
-                            <h3>Веб-програмування</h3>
-                            <p>Лабораторна робота онлайн.</p>
-                        </div>
-                        <div class="card-inner-footer">
-                            <span class="card-status-label">Статус: <strong>Триває</strong></span>
-                        </div>
-                    </article>
-
-                    <article class="card compact-card">
-                        <div class="card-content card-content-inner">
-                            <span class="glass-pill schedule-pill">5 пара</span>
-                            <h3>Кар'єрні навички</h3>
-                            <p>Проходження модулів та тестування на освітній платформі strum.</p>
-                        </div>
-                        <div class="card-inner-footer">
-                            <span class="card-status-label">Статус: <strong>Заплановано</strong></span>
-                        </div>
-                    </article>
+                <div class="cards-grid compact-grid" id="records-container">
+                    <!-- Дані завантажуються через JS -->
                 </div>
-            </section>
-
-            <section>
-                <div class="section-header">
-                    <div>
-                        <p class="section-eyebrow">Завдання та дедлайни</p>
-                        <h2 class="section-title">Найближчі <strong>активності</strong></h2>
-                    </div>
-                </div>
-
-                <div class="cards-grid compact-grid">
-                    <article class="card compact-card">
-                        <div class="card-content card-content-inner">
-                            <h3>Лабораторна робота №4</h3>
-                            <p>Адаптивність і дизайн-система. Термін: 04.10.</p>
-                        </div>
-                        <div class="card-inner-footer">
-                            <span>Високий пріоритет</span>
-                        </div>
-                    </article>
-
-                    <article class="card compact-card">
-                        <div class="card-content card-content-inner">
-                            <h3>Модуль Strum</h3>
-                            <p>Пройти 8-9 модуль на платформі Strum. Термін: за 3 дні до практики.</p>
-                        </div>
-                        <div class="card-inner-footer">
-                            <span>Важливо</span>
-                        </div>
-                    </article>
-                </div>
+                <div id="status-message" style="margin-top: 15px; font-weight: 500;"></div>
             </section>
         </main>
 
+        <!-- Сайдбар -->
         <aside>
             <h2>Пошук та теги</h2>
             <div class="search">
-                <input type="text" placeholder="Шукати в системі...">
+                <input type="text" id="search-input" placeholder="Шукати в системі...">
             </div>
-            <h3>Категорії</h3>
-            <div class="tags">
-                <a href="#" class="tag active">Усі</a>
-                <a href="#" class="tag">Розклад</a>
-                <a href="#" class="tag">Завдання</a>
-                <a href="#" class="tag">Курси</a>
+            
+            <h3>Фокус-таймер</h3>
+            <div class="pomodoro-widget" style="background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 16px; margin-bottom: 18px;">
+                <div class="pomo-sub" style="font-size: 0.8rem; color: var(--text-secondary);">Фокус 25 / 5 хв</div>
+                <div id="pomo-timer" class="pomo-time" style="font-size: 2rem; font-weight: 300; letter-spacing: -0.04em; margin: 8px 0;">25:00</div>
+                <div class="pomo-controls" style="display: flex; gap: 8px;">
+                    <button id="pomo-start" class="btn" style="min-height: 36px; padding: 6px 14px; font-size: 0.8rem; flex: 1;">Старт</button>
+                    <button id="pomo-reset" class="btn btn-light" style="min-height: 36px; padding: 6px 14px; font-size: 0.8rem; flex: 1;">Скинути</button>
+                </div>
+            </div>
+
+            <h3 style="margin-top: 20px;">Категорії</h3>
+            <div class="tags" id="category-tags">
+                <a href="#" class="tag active" data-cat="Усі">Усі</a>
+                <a href="#" class="tag" data-cat="Розклад">Розклад</a>
+                <a href="#" class="tag" data-cat="Завдання">Завдання</a>
+                <a href="#" class="tag" data-cat="Курси">Курси</a>
             </div>
         </aside>
 
@@ -126,6 +94,15 @@
         </footer>
     </div>
 
-<script type="module" src="/src/main.ts" defer></script>
+    <!-- Модальне вікно -->
+    <div id="record-modal" class="modal" aria-hidden="true" style="display:none;">
+        <div class="modal-content">
+            <button id="modal-close" class="modal-close-btn">&times;</button>
+            <h3 id="modal-title"></h3>
+            <p id="modal-desc"></p>
+        </div>
+    </div>
+
+<script src="script.js" defer></script>
 </body>
 </html>

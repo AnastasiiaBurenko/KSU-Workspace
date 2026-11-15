@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // --- 1. ПЕРЕМИКАЧ ТЕМИ (з урахуванням localStorage та системних налаштувань) ---
+    // --- 1. ПЕРЕМИКАЧ ТЕМИ ---
     const themeToggleBtn = document.getElementById('theme-toggle');
     const htmlElement = document.documentElement;
 
@@ -17,50 +17,43 @@ document.addEventListener('DOMContentLoaded', () => {
     if (themeToggleBtn) {
         themeToggleBtn.addEventListener('click', () => {
             htmlElement.classList.toggle('dark');
-            if (htmlElement.classList.contains('dark')) {
-                localStorage.setItem('theme', 'dark');
-            } else {
-                localStorage.setItem('theme', 'light');
-            }
+            localStorage.setItem('theme', htmlElement.classList.contains('dark') ? 'dark' : 'light');
         });
     }
 
-    // --- 2. ЗАВАНТАЖЕННЯ ДАНИХ ЧЕРЕЗ FETCH (3 стани: очікування, помилка, порожньо) ---
+    // --- 2. ЗАВАНТАЖЕННЯ ДАНИХ ТА ТЕГИ-КАТЕГОРІЇ ---
     const recordsContainer = document.getElementById('records-container');
     const statusMessage = document.getElementById('status-message');
     const searchInput = document.getElementById('search-input');
-    const categoryFilter = document.getElementById('category-filter');
+    const categoryTags = document.querySelectorAll('#category-tags .tag');
 
     let allRecords = [];
+    let currentCategory = 'Усі';
+    let searchQuery = '';
 
     async function loadRecords() {
         if (!statusMessage || !recordsContainer) return;
 
-        // Стан 1: Очікування (Loading)
         statusMessage.textContent = 'Завантаження даних...';
         recordsContainer.innerHTML = '';
 
         try {
-            const response =.await ? fetch('data.json') : await fetch('data.json');
-            
-            // Обов'язкова перевірка властивості ok (статуси 404, 500 тощо)
+            const response = await fetch('data.json');
             if (!response.ok) {
                 throw new Error(`Помилка сервера: ${response.status}`);
             }
 
             allRecords = await response.json();
 
-            // Стан 2: Порожній результат
             if (allRecords.length === 0) {
                 statusMessage.textContent = 'Список записів порожній.';
                 return;
             }
 
             statusMessage.textContent = '';
-            renderRecords(allRecords);
+            filterAndSearchRecords();
 
         } catch (error) {
-            // Стан 3: Помилка з можливістю повторити спробу
             console.error('Помилка завантаження даних:', error);
             statusMessage.innerHTML = `
                 <span>Не вдалося завантажити дані. Перевірте з'єднання.</span>
@@ -73,7 +66,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Рендеринг карток (без innerHTML із зовнішніми даними — захист від XSS через textContent)
     function renderRecords(records) {
         if (!recordsContainer) return;
         recordsContainer.innerHTML = '';
@@ -100,15 +92,16 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // --- 3. ФІЛЬТРАЦІЯ ТА ПОШУК ---
     function filterAndSearchRecords() {
-        const searchText = searchInput ? searchInput.value.toLowerCase() : '';
-        const selectedCategory = categoryFilter ? categoryFilter.value : 'all';
+        searchQuery = searchInput ? searchInput.value.toLowerCase() : '';
 
         const filtered = allRecords.filter(record => {
-            const matchesSearch = record.title.toLowerCase().includes(searchText) || 
-                                  record.description.toLowerCase().includes(searchText);
-            const matchesCategory = selectedCategory === 'all' || record.category === selectedCategory;
+            const matchesSearch = record.title.toLowerCase().includes(searchQuery) || 
+                                  record.description.toLowerCase().includes(searchQuery);
+            
+            const matchesCategory = currentCategory === 'Усі' || 
+                (record.category && record.category.toLowerCase().includes(currentCategory.toLowerCase())) ||
+                record.title.toLowerCase().includes(currentCategory.toLowerCase());
             
             return matchesSearch && matchesCategory;
         });
@@ -122,10 +115,92 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    if (searchInput) searchInput.addEventListener('input', filterAndSearchRecords);
-    if (categoryFilter) categoryFilter.addEventListener('change', filterAndSearchRecords);
+    if (categoryTags) {
+        categoryTags.forEach(tag => {
+            tag.addEventListener('click', (e) => {
+                e.preventDefault();
+                categoryTags.forEach(t => t.classList.remove('active'));
+                tag.classList.add('active');
+                currentCategory = tag.getAttribute('data-cat') || tag.textContent.trim();
+                filterAndSearchRecords();
+            });
+        });
+    }
 
-    // --- 4. ДЕЛЕГУВАННЯ ПОДІЙ НА КАРТКАХ ---
+    if (searchInput) searchInput.addEventListener('input', filterAndSearchRecords);
+
+    // --- 3. ПОМОДОРО-ТАЙМЕР ---
+    let pomoSeconds = 25 * 60;
+    let isWorkSession = true; 
+    let pomoInterval = null;
+    let isPomoRunning = false;
+
+    const pomoTimerDisplay = document.getElementById('pomo-timer');
+    const pomoStartBtn = document.getElementById('pomo-start');
+    const pomoResetBtn = document.getElementById('pomo-reset');
+
+    function updatePomoDisplay() {
+        if (!pomoTimerDisplay) return;
+        const m = Math.floor(pomoSeconds / 60);
+        const s = pomoSeconds % 60;
+        pomoTimerDisplay.textContent = `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+    }
+
+    if (pomoStartBtn) {
+        pomoStartBtn.addEventListener('click', () => {
+            if (!isPomoRunning) {
+                isPomoRunning = true;
+                pomoStartBtn.textContent = 'Пауза';
+                
+                pomoInterval = setInterval(() => {
+                    if (pomoSeconds > 0) {
+                        pomoSeconds--;
+                        updatePomoDisplay();
+                    } else {
+                        clearInterval(pomoInterval);
+                        isPomoRunning = false;
+                        
+                        if (isWorkSession) {
+                            isWorkSession = false;
+                            pomoSeconds = 5 * 60;
+                            alert('Время вышло! Отличная работа. Начинается перерыв (5 мин).');
+                        } else {
+                            isWorkSession = true;
+                            pomoSeconds = 25 * 60;
+                            alert('Перерыв закончился! Возвращаемся к фокусу (25 мин).');
+                        }
+                        
+                        pomoStartBtn.textContent = 'Старт';
+                        updatePomoDisplay();
+                    }
+                }, 1000);
+            } else {
+                clearInterval(pomoInterval);
+                isPomoRunning = false;
+                pomoStartBtn.textContent = 'Продовжити';
+            }
+        });
+    }
+
+    if (pomoResetBtn) {
+        pomoResetBtn.addEventListener('click', () => {
+            clearInterval(pomoInterval);
+            isPomoRunning = false;
+            isWorkSession = true;
+            pomoSeconds = 25 * 60;
+            updatePomoDisplay();
+            if (pomoStartBtn) pomoStartBtn.textContent = 'Старт';
+        });
+    }
+    updatePomoDisplay();
+
+    // --- 4. МОДАЛЬНЕ ВІКНО ---
+    let lastFocusedElement = null;
+    const modal = document.getElementById('record-modal');
+    const modalCloseBtn = document.getElementById('modal-close');
+    const modalTitle = document.getElementById('modal-title');
+    const modalDesc = document.getElementById('modal-desc');
+
     if (recordsContainer) {
         recordsContainer.addEventListener('click', (event) => {
             const card = event.target.closest('.card');
@@ -140,25 +215,16 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // --- 5. МОДАЛЬНЕ ВІКНО (фокус, Esc, клік поза вікном) ---
-    let lastFocusedElement = null;
-    const modal = document.getElementById('record-modal');
-    const modalCloseBtn = document.getElementById('modal-close');
-    const modalTitle = document.getElementById('modal-title');
-    const modalDesc = document.getElementById('modal-desc');
-
     function openModal(record, triggerElement) {
         if (!modal) return;
-        lastFocusedElement = triggerElement; // Запам'ятовуємо елемент для повернення фокуса
+        lastFocusedElement = triggerElement;
 
         if (modalTitle) modalTitle.textContent = record.title;
         if (modalDesc) modalDesc.textContent = record.description;
 
         modal.classList.add('is-open');
         modal.setAttribute('aria-hidden', 'false');
-
         if (modalCloseBtn) modalCloseBtn.focus();
-
         document.addEventListener('keydown', handleKeyDown);
     }
 
@@ -166,26 +232,17 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!modal) return;
         modal.classList.remove('is-open');
         modal.setAttribute('aria-hidden', 'true');
-
         document.removeEventListener('keydown', handleKeyDown);
-
-        // Повертаємо фокус туди, звідки відкрили
-        if (lastFocusedElement) {
-            lastFocusedElement.focus();
-        }
+        if (lastFocusedElement) lastFocusedElement.focus();
     }
 
     function handleKeyDown(event) {
-        if (event.key === 'Escape') {
-            closeModal();
-        }
+        if (event.key === 'Escape') closeModal();
     }
 
     if (modal) {
         modal.addEventListener('click', (event) => {
-            if (event.target === modal) {
-                closeModal();
-            }
+            if (event.target === modal) closeModal();
         });
     }
 
@@ -193,7 +250,6 @@ document.addEventListener('DOMContentLoaded', () => {
         modalCloseBtn.addEventListener('click', closeModal);
     }
 
-    // Запуск завантаження даних, якщо елемент існує на сторінці
     if (recordsContainer) {
         loadRecords();
     }
