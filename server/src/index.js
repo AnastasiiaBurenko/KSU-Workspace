@@ -1,37 +1,28 @@
 import express from 'express';
 import cors from 'cors';
-import dotenv from 'dotenv';
-import authRoutes from './routes/auth.routes.js';
-import recordsRoutes from './routes/records.routes.js';
-import './db/database.js';
-
-dotenv.config();
+import { config } from './config/config.js';
+import { initDatabase } from './db/database.js';
+import recordRoutes from './routes/recordRoutes.js';
+import { requestLogger } from './middleware/logger.js';
+import { notFoundHandler, errorHandler } from './middleware/errorHandler.js';
 
 const app = express();
 
-const allowedOrigins = [
-    'https://anastasiiaburenko.github.io',
-    'http://localhost:5173',
-    'http://localhost:3000'
-];
-
-app.use(cors({
-    origin: function (origin, callback) {
-        if (!origin || allowedOrigins.indexOf(origin) !== -1) {
-            callback(null, true);
-        } else {
-            callback(new Error('Blocked by CORS policy'));
-        }
-    },
-    credentials: true
-}));
-
+app.use(cors({ origin: config.corsOrigin }));
 app.use(express.json());
+app.use(requestLogger);
 
-app.use('/api/auth', authRoutes);
-app.use('/api/records', recordsRoutes);
+app.use('/api/records', recordRoutes);
 
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-    console.log(`Сервер KSU Workspace запущено на порту ${PORT}`);
-});
+app.use(notFoundHandler);
+app.use(errorHandler);
+
+initDatabase()
+    .then(() => {
+        app.listen(config.port, () => {
+            console.log(`Сервер KSU Workspace запущено на порту ${config.port}`);
+        });
+    })
+    .catch((err) => {
+        console.error('Помилка запуску бази даних:', err);
+    });
