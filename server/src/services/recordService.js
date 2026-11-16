@@ -1,70 +1,89 @@
-import { db } from '../db/database.js';
+import db from '../db/database.js';
 
 export const recordService = {
-  getAll(page = 1, limit = 10, category, search) {
+  getAll({ page = 1, limit = 10, category, search }) {
     return new Promise((resolve, reject) => {
       let query = `SELECT * FROM records WHERE 1=1`;
-      let countQuery = `SELECT COUNT(*) as total FROM records WHERE 1=1`;
       const params = [];
 
       if (category && category !== 'all') {
-        query += ` AND category = ?`;
-        countQuery += ` AND category = ?`;
+        query += ` AND LOWER(category) = LOWER(?)`;
         params.push(category);
       }
 
       if (search) {
-        query += ` AND (title LIKE ? OR description LIKE ?)`;
-        countQuery += ` AND (title LIKE ? OR description LIKE ?)`;
-        const searchQuery = `%${search}%`;
-        params.push(searchQuery, searchQuery);
+        query += ` AND (LOWER(title) LIKE ? OR LOWER(description) LIKE ?)`;
+        params.push(`%${search.toLowerCase()}%`, `%${search.toLowerCase()}%`);
       }
 
-      const numLimit = Number(limit) || 10;
-      const numOffset = (Number(page) - 1) * numLimit;
+      const offset = (Number(page) - 1) * Number(limit);
+      query += ` ORDER BY id DESC LIMIT ? OFFSET ?`;
+      params.push(Number(limit), offset);
 
-      query += ` LIMIT ${numLimit} OFFSET ${numOffset}`;
-
-      db.get(countQuery, params, (err, countRow) => {
+      db.all(query, params, (err, rows) => {
         if (err) return reject(err);
 
-        db.all(query, params, (err, rows) => {
-          if (err) return reject(err);
+        db.get(`SELECT COUNT(*) as total FROM records`, [], (errCount, countResult) => {
+          if (errCount) return reject(errCount);
+
           resolve({
-            total: countRow ? countRow.total : 0,
+            total: countResult.total,
             page: Number(page),
-            limit: numLimit,
-            data: rows,
+            limit: Number(limit),
+            data: rows
           });
         });
       });
     });
   },
 
+  getById(id) {
+    return new Promise((resolve, reject) => {
+      const query = `SELECT * FROM records WHERE id = ?`;
+      db.get(query, [id], (err, row) => {
+        if (err) reject(err);
+        else resolve(row);
+      });
+    });
+  },
+
   create(data) {
     return new Promise((resolve, reject) => {
-      const query = `INSERT INTO records (title, description, category, date) VALUES (?, ?, ?, ?)`;
-      const params = [
-        data.title,
-        data.description,
-        data.category,
-        data.date || new Date().toISOString().split('T')[0]
-      ];
+      const query = `
+        INSERT INTO records (title, description, category, date)
+        VALUES (?, ?, ?, ?)
+      `;
+      const dateStr = data.date || new Date().toISOString().split('T')[0];
+      const params = [data.title, data.description, data.category, dateStr];
 
       db.run(query, params, function (err) {
         if (err) return reject(err);
-        resolve({ id: this.lastID, ...data });
+        resolve({
+          id: this.lastID,
+          title: data.title,
+          description: data.description,
+          category: data.category,
+          date: dateStr
+        });
       });
     });
   },
 
   update(id, data) {
     return new Promise((resolve, reject) => {
-      const query = `UPDATE records SET title = ?, description = ?, category = ?, date = ? WHERE id = ?`;
+      const query = `
+        UPDATE records
+        SET title = COALESCE(?, title),
+            description = COALESCE(?, description),
+            category = COALESCE(?, category),
+            date = COALESCE(?, date)
+        WHERE id = ?
+      `;
       const params = [data.title, data.description, data.category, data.date, id];
 
       db.run(query, params, function (err) {
         if (err) return reject(err);
+        if (this.changes === 0) return resolve(null);
         resolve({ id: Number(id), ...data });
       });
     });
@@ -75,7 +94,7 @@ export const recordService = {
       const query = `DELETE FROM records WHERE id = ?`;
       db.run(query, [id], function (err) {
         if (err) return reject(err);
-        resolve({ deleted: this.changes > 0 });
+        resolve(this.changes > 0);
       });
     });
   }
