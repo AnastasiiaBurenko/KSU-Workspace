@@ -1,1 +1,0 @@
-import { authStatus } from '../controllers/auth.controller.js';
