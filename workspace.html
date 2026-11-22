@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Створення запису у персональному просторі KSU Workspace">
     <title>KSU Workspace | Мій Workspace</title>
+    <link rel="preconnect" href="https://ksu-workspace-1.onrender.com" crossorigin>
+    <link rel="icon" href="data:,">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -38,10 +40,24 @@
                     <p class="section-description">Створюйте власні нотатки, прив'язуйте їх до дисциплін та організовуйте навчальний процес.</p>
                 </div>
 
-                <div class="card" id="auth-card" style="margin-bottom: 24px;">
+                <section class="card auth-card" aria-labelledby="auth-title">
                     <div class="card-content-inner">
-                        <h2>Вхід</h2>
-                        <p id="auth-status" role="status">Увійдіть або зареєструйтесь, щоб створювати записи.</p>
+                        <div class="auth-head">
+                            <svg class="auth-logo" viewBox="0 0 48 48" aria-hidden="true" focusable="false">
+                                <g fill="currentColor">
+                                    <circle cx="24" cy="6" r="3"/>
+                                    <circle cx="36.7" cy="11.3" r="3" opacity=".85"/>
+                                    <circle cx="42" cy="24" r="3" opacity=".7"/>
+                                    <circle cx="36.7" cy="36.7" r="3" opacity=".55"/>
+                                    <circle cx="24" cy="42" r="3" opacity=".4"/>
+                                    <circle cx="11.3" cy="36.7" r="3" opacity=".3"/>
+                                    <circle cx="6" cy="24" r="3" opacity=".2"/>
+                                    <circle cx="11.3" cy="11.3" r="3" opacity=".1"/>
+                                </g>
+                            </svg>
+                            <h2 id="auth-title" class="auth-title">Вхід у Workspace</h2>
+                            <p class="auth-subtitle">Увійдіть або створіть акаунт, щоб додавати й видаляти записи</p>
+                        </div>
 
                         <form id="auth-form" action="#">
                             <div class="form-group">
@@ -50,17 +66,31 @@
                             </div>
                             <div class="form-group">
                                 <label for="auth-password">Пароль (від 8 символів):</label>
-                                <input type="password" id="auth-password" class="form-control" autocomplete="current-password" minlength="8" maxlength="72" required>
+                                <div class="password-field">
+                                    <input type="password" id="auth-password" class="form-control" autocomplete="current-password" minlength="8" maxlength="72" required>
+                                    <button type="button" id="toggle-password" class="password-toggle" aria-label="Показати пароль" aria-pressed="false">
+                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                            <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/>
+                                            <circle cx="12" cy="12" r="3"/>
+                                            <path class="eye-slash" d="M4 4l16 16"/>
+                                        </svg>
+                                    </button>
+                                </div>
                             </div>
-                            <div class="workspace-form-actions">
+                            <p id="auth-status" class="auth-status" role="status"></p>
+                            <div class="auth-actions">
                                 <button type="submit" id="login-btn" class="btn">Увійти</button>
-                                <button type="button" id="register-btn" class="btn btn-light">Зареєструватися</button>
+                                <button type="button" id="register-btn" class="btn btn-light">Створити акаунт</button>
                             </div>
                         </form>
 
-                        <button type="button" id="logout-btn" class="btn btn-light" style="display: none;">Вийти</button>
+                        <div id="auth-session" class="auth-session" hidden>
+                            <div id="auth-avatar" class="auth-avatar" aria-hidden="true"></div>
+                            <p id="auth-session-text" class="auth-session-text"></p>
+                            <button type="button" id="logout-btn" class="btn btn-light">Вийти</button>
+                        </div>
                     </div>
-                </div>
+                </section>
 
                 <form id="record-form" class="workspace-form-grid" action="#">
                     <div class="workspace-card-block card">
@@ -132,6 +162,8 @@
 
                 <div class="saved-records-section">
                     <h2>Мої збережені записи</h2>
+                    <p id="records-hint" class="records-hint"></p>
+                    <ul id="records-list" class="records-list" aria-live="polite"></ul>
                 </div>
             </section>
         </main>

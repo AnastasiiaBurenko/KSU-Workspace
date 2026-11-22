@@ -1037,3 +1037,6 @@ html.dark .records-list {
   .records-list .record-row { flex-wrap: wrap; }
   .records-list .record-icon { display: none; }
 }
+.hero {
+  background: linear-gradient(#0000000a 0%, #0000001a 40%, #000000b8 100%);
+}
