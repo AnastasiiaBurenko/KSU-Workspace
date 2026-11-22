@@ -38,12 +38,12 @@ document.addEventListener('DOMContentLoaded', () => {
         recordsContainer.innerHTML = '';
 
         try {
-            const response = await fetch('data.json');
-            if (!response.ok) {
+        const response = await fetch('https://ksu-workspace-1.onrender.com/api/records?limit=100');            if (!response.ok) {
                 throw new Error(`Помилка сервера: ${response.status}`);
             }
 
-            allRecords = await response.json();
+            const payload = await response.json();
+            allRecords = payload.data;
 
             if (allRecords.length === 0) {
                 statusMessage.textContent = 'Список записів порожній.';
