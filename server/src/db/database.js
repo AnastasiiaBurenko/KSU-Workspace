@@ -1,36 +1,59 @@
-import sqlite3 from 'sqlite3';
-import path from 'path';
-import { fileURLToPath } from 'url';
+import pg from 'pg';
+import { config } from '../config/config.js';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-const dbPath = path.resolve(__dirname, '../../database.sqlite');
+if (!config.databaseUrl) {
+  console.error('Не задано DATABASE_URL у змінних середовища');
+  process.exit(1);
+}
 
-const db = new sqlite3.Database(dbPath);
+const pool = new pg.Pool({
+  connectionString: config.databaseUrl,
+  max: 5,
+  idleTimeoutMillis: 30000,
+  connectionTimeoutMillis: 15000
+});
 
-const run = (sql) =>
-  new Promise((resolve, reject) => {
-    db.run(sql, (err) => (err ? reject(err) : resolve()));
-  });
+pool.on('error', (err) => {
+  console.error('Помилка з’єднання з базою:', err.message);
+});
+
+const SAMPLE_RECORDS = [
+  ['Веб-програмування', 'Лабораторна робота онлайн. Викладач: Лемещук О.І.', 'Курси', '2026-10-28'],
+  ['Кар’єрні навички', 'Проходження модулів та тестування на платформі Strum. Викладач: Кобець В.М.', 'Матеріали', '2026-10-25'],
+  ['Алгоритми і структури даних', 'Виконання практичної роботи. Викладач: Львов М.С.', 'Проєкти', '2026-10-22']
+];
 
 export async function initDatabase() {
-  await run(`
+  await pool.query(`
     CREATE TABLE IF NOT EXISTS records (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      title TEXT NOT NULL CHECK(length(title) > 0),
+      id SERIAL PRIMARY KEY,
+      title TEXT NOT NULL CHECK (length(title) > 0),
       description TEXT NOT NULL,
       category TEXT NOT NULL,
       date TEXT NOT NULL
     )
   `);
-  await run(`
+  await pool.query(`
     CREATE TABLE IF NOT EXISTS users (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      username TEXT NOT NULL UNIQUE CHECK(length(username) >= 3),
+      id SERIAL PRIMARY KEY,
+      username TEXT NOT NULL UNIQUE CHECK (length(username) >= 3),
       password_hash TEXT NOT NULL
     )
   `);
-  console.log('Таблиці records і users готові у файлі database.sqlite');
+  await pool.query('CREATE INDEX IF NOT EXISTS idx_records_category ON records (category)');
+  await pool.query('CREATE INDEX IF NOT EXISTS idx_records_title ON records (title)');
+
+  const { rows } = await pool.query('SELECT COUNT(*)::int AS total FROM records');
+  if (rows[0].total === 0) {
+    for (const [title, description, category, date] of SAMPLE_RECORDS) {
+      await pool.query(
+        'INSERT INTO records (title, description, category, date) VALUES ($1, $2, $3, $4)',
+        [title, description, category, date]
+      );
+    }
+  }
+
+  console.log('Таблиці records і users готові в базі Neon (PostgreSQL)');
 }
 
-export default db;
+export default pool;

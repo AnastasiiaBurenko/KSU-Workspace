@@ -1,101 +1,87 @@
-import db from '../db/database.js';
+import pool from '../db/database.js';
+
+const toId = (id) => {
+  const value = Number(id);
+  return Number.isInteger(value) && value > 0 && value <= 2147483647 ? value : null;
+};
 
 export const recordService = {
-  getAll({ page = 1, limit = 10, category, search }) {
-    return new Promise((resolve, reject) => {
-      let query = `SELECT * FROM records WHERE 1=1`;
-      const params = [];
+  async getAll({ page = 1, limit = 10, category, search }) {
+    const pageNumber = Math.max(parseInt(page, 10) || 1, 1);
+    const limitNumber = Math.min(Math.max(parseInt(limit, 10) || 10, 1), 100);
 
-      if (category && category !== 'all') {
-        query += ` AND LOWER(category) = LOWER(?)`;
-        params.push(category);
-      }
+    const conditions = [];
+    const params = [];
 
-      if (search) {
-        query += ` AND (LOWER(title) LIKE ? OR LOWER(description) LIKE ?)`;
-        params.push(`%${search.toLowerCase()}%`, `%${search.toLowerCase()}%`);
-      }
+    if (category && category !== 'all') {
+      params.push(category);
+      conditions.push(`LOWER(category) = LOWER($${params.length})`);
+    }
 
-      const offset = (Number(page) - 1) * Number(limit);
-      query += ` ORDER BY id DESC LIMIT ? OFFSET ?`;
-      params.push(Number(limit), offset);
+    if (search) {
+      params.push(`%${String(search).toLowerCase()}%`);
+      conditions.push(
+        `(LOWER(title) LIKE $${params.length} OR LOWER(description) LIKE $${params.length})`
+      );
+    }
 
-      db.all(query, params, (err, rows) => {
-        if (err) return reject(err);
+    const where = conditions.length ? `WHERE ${conditions.join(' AND ')}` : '';
 
-        db.get(`SELECT COUNT(*) as total FROM records`, [], (errCount, countResult) => {
-          if (errCount) return reject(errCount);
+    const countResult = await pool.query(
+      `SELECT COUNT(*)::int AS total FROM records ${where}`,
+      params
+    );
 
-          resolve({
-            total: countResult.total,
-            page: Number(page),
-            limit: Number(limit),
-            data: rows
-          });
-        });
-      });
-    });
+    params.push(limitNumber, (pageNumber - 1) * limitNumber);
+    const dataResult = await pool.query(
+      `SELECT * FROM records ${where} ORDER BY id DESC LIMIT $${params.length - 1} OFFSET $${params.length}`,
+      params
+    );
+
+    return {
+      total: countResult.rows[0].total,
+      page: pageNumber,
+      limit: limitNumber,
+      data: dataResult.rows
+    };
   },
 
-  getById(id) {
-    return new Promise((resolve, reject) => {
-      const query = `SELECT * FROM records WHERE id = ?`;
-      db.get(query, [id], (err, row) => {
-        if (err) reject(err);
-        else resolve(row);
-      });
-    });
+  async getById(id) {
+    const numericId = toId(id);
+    if (numericId === null) return null;
+    const { rows } = await pool.query('SELECT * FROM records WHERE id = $1', [numericId]);
+    return rows[0] || null;
   },
 
-  create(data) {
-    return new Promise((resolve, reject) => {
-      const query = `
-        INSERT INTO records (title, description, category, date)
-        VALUES (?, ?, ?, ?)
-      `;
-      const dateStr = data.date || new Date().toISOString().split('T')[0];
-      const params = [data.title, data.description, data.category, dateStr];
-
-      db.run(query, params, function (err) {
-        if (err) return reject(err);
-        resolve({
-          id: this.lastID,
-          title: data.title,
-          description: data.description,
-          category: data.category,
-          date: dateStr
-        });
-      });
-    });
+  async create(data) {
+    const date = data.date || new Date().toISOString().split('T')[0];
+    const { rows } = await pool.query(
+      'INSERT INTO records (title, description, category, date) VALUES ($1, $2, $3, $4) RETURNING *',
+      [data.title, data.description, data.category, date]
+    );
+    return rows[0];
   },
 
-  update(id, data) {
-    return new Promise((resolve, reject) => {
-      const query = `
-        UPDATE records
-        SET title = COALESCE(?, title),
-            description = COALESCE(?, description),
-            category = COALESCE(?, category),
-            date = COALESCE(?, date)
-        WHERE id = ?
-      `;
-      const params = [data.title, data.description, data.category, data.date, id];
-
-      db.run(query, params, function (err) {
-        if (err) return reject(err);
-        if (this.changes === 0) return resolve(null);
-        resolve({ id: Number(id), ...data });
-      });
-    });
+  async update(id, data) {
+    const numericId = toId(id);
+    if (numericId === null) return null;
+    const { rows } = await pool.query(
+      `UPDATE records
+       SET title = COALESCE($1, title),
+           description = COALESCE($2, description),
+           category = COALESCE($3, category),
+           date = COALESCE($4, date)
+       WHERE id = $5
+       RETURNING *`,
+      [data.title, data.description, data.category, data.date, numericId]
+    );
+    return rows[0] || null;
   },
 
-  delete(id) {
-    return new Promise((resolve, reject) => {
-      const query = `DELETE FROM records WHERE id = ?`;
-      db.run(query, [id], function (err) {
-        if (err) return reject(err);
-        resolve(this.changes > 0);
-      });
-    });
+  async delete(id) {
+    const numericId = toId(id);
+    if (numericId === null) return false;
+    const result = await pool.query('DELETE FROM records WHERE id = $1', [numericId]);
+    return result.rowCount > 0;
   }
 };

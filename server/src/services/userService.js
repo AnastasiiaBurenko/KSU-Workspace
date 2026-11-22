@@ -1,23 +1,19 @@
-import db from '../db/database.js';
+import pool from '../db/database.js';
 
 export const userService = {
-  create(username, passwordHash) {
-    return new Promise((resolve, reject) => {
-      const query = `INSERT INTO users (username, password_hash) VALUES (?, ?)`;
-      db.run(query, [username, passwordHash], function (err) {
-        if (err) return reject(err);
-        resolve({ id: this.lastID, username });
-      });
-    });
+  async create(username, passwordHash) {
+    const { rows } = await pool.query(
+      'INSERT INTO users (username, password_hash) VALUES ($1, $2) RETURNING id, username',
+      [username, passwordHash]
+    );
+    return rows[0];
   },
 
-  getByUsername(username) {
-    return new Promise((resolve, reject) => {
-      const query = `SELECT id, username, password_hash FROM users WHERE username = ?`;
-      db.get(query, [username], (err, row) => {
-        if (err) reject(err);
-        else resolve(row);
-      });
-    });
+  async getByUsername(username) {
+    const { rows } = await pool.query(
+      'SELECT id, username, password_hash FROM users WHERE username = $1',
+      [username]
+    );
+    return rows[0] || null;
   }
 };

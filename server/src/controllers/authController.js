@@ -38,7 +38,7 @@ export const authController = {
       const user = await userService.create(username.trim(), passwordHash);
       res.status(201).json(user);
     } catch (err) {
-      if (err.code === 'SQLITE_CONSTRAINT') {
+      if (err.code === '23505') {
         const error = new Error("Користувач з таким ім'ям уже існує");
         error.status = 409;
         return next(error);
